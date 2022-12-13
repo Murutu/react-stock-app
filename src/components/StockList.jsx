@@ -5,7 +5,14 @@ const StockList = () => {
   const [stock, setStock] = useState();
   /*When we send request to the finhub api it expects everything to be in caps */
   const [watchList, setWatchList] = useState(["GOOGL", "MSFT", "AMZN"]);
+  /*
+  logic adding to change color based on whether it was positive/negative
+  */
 
+  const changeColor = (change) => {
+    return change > 0 ? "success" : "danger";
+  }
+  
   /*
     To avoid calling setStock(response.data) on a component that is unmounted
     We do :
@@ -50,6 +57,12 @@ const StockList = () => {
     We do this when the component gets unmounted
     In order to avoid calling setStock on unmounted component
      */
+
+    /*
+    <tbody>
+     Since this is react we have to provide a key for each element we return 
+      Here the key I will use the symbol 
+    */
     return () => (isMounted = false);
   }, []);
 
@@ -69,21 +82,23 @@ const StockList = () => {
           </tr>
         </thead>
 
+      
+
         <tbody>
-          {stock.map((stockData) => {
-            return (
-              <tr className="table-row" key={stockData.symbol}>
-                <th scope="row">{stockData.symbol}</th>
-                <td>{stockData.data.c}</td>
-                <td>{stockData.data.d}</td>
-                <td>{stockData.data.dp}</td>
-                <td>{stockData.data.h}</td>
-                <td>{stockData.data.l}</td>
-                <td>{stockData.data.o}</td>
-                <td>{stockData.data.pc}</td>
-              </tr>
-            );
-          })}
+         {stock.map((stockData) => {
+          return (
+            <tr className="table-row" key={stockData.symbol}>
+              <th className="row">{stockData.symbol}</th>
+              <td>{stockData.data.c}</td>
+              <td className={`text-${changeColor(stockData.data.d)}`}>{stockData.data.d}</td>
+              <td className={`text-${changeColor(stockData.data.dp)}`}>{stockData.data.dp}</td>
+              <td>{stockData.data.h}</td>
+              <td>{stockData.data.l}</td>
+              <td>{stockData.data.o}</td>
+              <td>{stockData.data.pc}</td>
+            </tr>
+          )
+         })}
         </tbody>
       </table>
     </div>
