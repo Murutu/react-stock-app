@@ -41,16 +41,17 @@ const StockList = () => {
               },
             });
           })
+          
         );
 
-        console.log(responses);
+        
         const data = responses.map((response) => {
           return {
             data: response.data,
             symbol: response.config.params.symbol,
           };
         });
-        console.log(data);
+
         if (isMounted) {
           setStock(data);
         }
@@ -61,6 +62,8 @@ const StockList = () => {
     /*
     We do this when the component gets unmounted
     In order to avoid calling setStock on unmounted component
+
+    Added ? before .map to ask if the array existed
      */
 
     /*
@@ -90,7 +93,7 @@ const StockList = () => {
       
 
         <tbody>
-         {stock.map((stockData) => {
+         {stock?.map((stockData) => {
           return (
             <tr className="table-row" key={stockData.symbol}>
               <th className="row">{stockData.symbol}</th>
