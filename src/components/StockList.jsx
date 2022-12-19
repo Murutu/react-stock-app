@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import {BsFillCaretDownFill, BsFillCaretUpFill} from "react-icons/bs";
 import finHub from "../apis/finHub";
+import { WatchListContext } from "../context/watchListContext";
 
 const StockList = () => {
-  const [stock, setStock] = useState();
-  /*When we send request to the finhub api it expects everything to be in caps */
-  const [watchList, setWatchList] = useState(["GOOGL", "MSFT", "AMZN"]);
+  const [stock, setStock] = useState([]);
+  const {watchList} = useContext(WatchListContext);
   /*
   logic adding to change color based on whether it was positive/negative
   */
@@ -72,7 +72,7 @@ const StockList = () => {
       Here the key I will use the symbol 
     */
     return () => (isMounted = false);
-  }, []);
+  }, [watchList]); // every time a stock gets added the watchList is updated
 
   return (
     <div>
