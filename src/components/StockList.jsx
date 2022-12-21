@@ -1,23 +1,7 @@
-import { useState, useEffect, useContext } from "react";
-import {BsFillCaretDownFill, BsFillCaretUpFill} from "react-icons/bs";
-import finHub from "../apis/finHub";
-import { WatchListContext } from "../context/watchListContext";
-
-const StockList = () => {
-  const [stock, setStock] = useState([]);
-  const {watchList} = useContext(WatchListContext);
-  /*
+/*
   logic adding to change color based on whether it was positive/negative
   */
 
-  const changeColor = (change) => {
-    return change > 0 ? "success" : "danger";
-  }
-
-  const renderIcon = (change) => {
-    return change > 0 ? <BsFillCaretUpFill /> : <BsFillCaretDownFill />
-  }
-  
   /*
     To avoid calling setStock(response.data) on a component that is unmounted
     We do :
@@ -27,6 +11,39 @@ const StockList = () => {
     }
     return () => (isMounted = false)
     */
+
+
+  /*
+    We do this when the component gets unmounted
+    In order to avoid calling setStock on unmounted component
+
+    Added ? before .map to ask if the array existed
+     */
+
+    /*
+    <tbody>
+     Since this is react we have to provide a key for each element we return 
+      Here the key I will use the symbol 
+    */
+
+import { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import {BsFillCaretDownFill, BsFillCaretUpFill} from "react-icons/bs";
+import finHub from "../apis/finHub";
+import { WatchListContext } from "../context/watchListContext";
+
+const StockList = () => {
+  const [stock, setStock] = useState([]);
+  const {watchList} = useContext(WatchListContext);
+  const navigate = useNavigate();
+
+  const changeColor = (change) => {
+    return change > 0 ? "success" : "danger";
+  }
+
+  const renderIcon = (change) => {
+    return change > 0 ? <BsFillCaretUpFill /> : <BsFillCaretDownFill />
+  }
 
   useEffect(() => {
     let isMounted = true;
@@ -58,21 +75,13 @@ const StockList = () => {
       } catch (err) {}
     };
     fetchData();
-
-    /*
-    We do this when the component gets unmounted
-    In order to avoid calling setStock on unmounted component
-
-    Added ? before .map to ask if the array existed
-     */
-
-    /*
-    <tbody>
-     Since this is react we have to provide a key for each element we return 
-      Here the key I will use the symbol 
-    */
     return () => (isMounted = false);
   }, [watchList]); // every time a stock gets added the watchList is updated
+
+
+  const handleStockSelect = (symbol) => {
+    navigate(`detail/${symbol}`)
+  }
 
   return (
     <div>
@@ -95,7 +104,7 @@ const StockList = () => {
         <tbody>
          {stock?.map((stockData) => {
           return (
-            <tr className="table-row" key={stockData.symbol}>
+            <tr style={{ cursor: "pointer" }} onClick={() => handleStockSelect(stockData.symbol)} className="table-row" key={stockData.symbol}>
               <th className="row">{stockData.symbol}</th>
               <td>{stockData.data.c}</td>
               <td className={`text-${changeColor(stockData.data.d)}`}>{stockData.data.d}
